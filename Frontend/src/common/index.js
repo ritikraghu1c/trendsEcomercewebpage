@@ -1,5 +1,5 @@
 
-const backendDomin = process.env.REACT_APP_BACKEND_URL;
+const backendDomin ='http://localhost:8080';
 
 const SummaryApi = {
     signUP : {
@@ -78,6 +78,30 @@ const SummaryApi = {
         url : `${backendDomin}/api/filter-product`,
         method : 'post'
     },
+
+    order:{
+        url:`${backendDomin}/api/order`,
+        method : 'post'
+    },
+    paymentVerify : {
+        url : `${backendDomin}/api/verify`,
+        method : 'post'
+    },
+
+      getUserOrders: {
+        url: `${backendDomin}/api/order/user-orders`,
+        method: 'get'
+    },
+    getAllOrders: {
+     url: `${backendDomin}/api/order/all-orders`,
+     method: 'get'
+   },
+   deleteOrder: (orderId) => ({
+    url: `${backendDomin}/api/order/${orderId}`,
+    method: 'delete'
+   })
+
+
 
 }
 

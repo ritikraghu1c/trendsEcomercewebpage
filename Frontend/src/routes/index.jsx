@@ -11,7 +11,7 @@ import CategoryProduct from '../pages/CategoryProduct'
 import ProductDetails from '../pages/ProductDetails'
 import Cart from '../pages/Cart'
 import SearchProduct from '../pages/SearchProduct'
-import Succes from '../pages/Succes'
+import Success from '../pages/Success'
 import Cancel from '../pages/Cancel'
 import AllOrders from '../pages/AllOrders'
 import UserPanel from '../pages/UserPanel'
@@ -52,7 +52,7 @@ const router = createBrowserRouter([
             },
             {
                 path: 'Success',
-                element: <Succes />
+                element: <Success />
             },
             {
                 path: 'Cancel',

@@ -13,8 +13,8 @@ import Cart from '../pages/Cart'
 import SearchProduct from '../pages/SearchProduct'
 import Succes from '../pages/Succes'
 import Cancel from '../pages/Cancel'
-import AllOrders from '../pages/AllOreders'
-import UserPanel from '../pages/userPanel'
+import AllOrders from '../pages/AllOrders'
+import UserPanel from '../pages/UserPanel'
 import Order from '../pages/Order'
 
 const router = createBrowserRouter([

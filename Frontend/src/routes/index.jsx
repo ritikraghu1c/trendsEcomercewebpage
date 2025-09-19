@@ -14,8 +14,9 @@ import SearchProduct from '../pages/SearchProduct'
 import Success from '../pages/Success'
 import Cancel from '../pages/Cancel'
 import AllOrders from '../pages/AllOrders'
-import UserPanel from '../pages/UserPanel'
+//import UserPanel from '../pages/UserPanel'
 import Order from '../pages/Order'
+import UserPanel from '../pages/userPanel'
 
 const router = createBrowserRouter([
     {

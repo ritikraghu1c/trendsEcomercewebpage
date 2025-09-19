@@ -1,82 +1,58 @@
-import React, { useContext, useState, useEffect } from 'react';
-import Logo from './Logo';
+import React, { useContext, useState } from 'react'
+import Logo from './Logo'
 import { GrSearch } from "react-icons/gr";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { FaShoppingCart } from 'react-icons/fa';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import SummaryApi from '../common';
-import { toast } from 'react-toastify';
+import { toast } from 'react-toastify'
 import { setUserDetails } from '../store/userSlice';
 import ROLE from '../common/role';
 import Context from '../context';
 
 const Header = () => {
-  const reduxUser = useSelector(state => state?.user?.user);
-  const dispatch = useDispatch();
-  const [localUser, setLocalUser] = useState(reduxUser);
-  const [menuDisplay, setMenuDisplay] = useState(false);
-  const [showMobileSearch, setShowMobileSearch] = useState(false);
-  const context = useContext(Context);
-  const navigate = useNavigate();
-  const searchInput = useLocation();
-  const URLSearch = new URLSearchParams(searchInput?.search);
-  const searchQuery = URLSearch.getAll("q")?.[0] || "";
-  const [search, setSearch] = useState(searchQuery);
-
-  // Sync Redux user to local state
-  useEffect(() => {
-    if (reduxUser) {
-      setLocalUser(reduxUser);
-      localStorage.setItem('user', JSON.stringify(reduxUser));
-    } else {
-      const storedUser = JSON.parse(localStorage.getItem('user'));
-      if (storedUser) setLocalUser(storedUser);
-    }
-  }, [reduxUser]);
+  const user = useSelector(state => state?.user?.user)
+  const dispatch = useDispatch()
+  const [menuDisplay, setMenuDisplay] = useState(false)
+  const [showMobileSearch, setShowMobileSearch] = useState(false)
+  const context = useContext(Context)
+  const navigate = useNavigate()
+  const searchInput = useLocation()
+  const URLSearch = new URLSearchParams(searchInput?.search)
+  const searchQuery = URLSearch.getAll("q")?.[0] || ""
+  const [search, setSearch] = useState(searchQuery)
 
   const handleLogout = async () => {
-    try {
-      const fetchData = await fetch(SummaryApi.logout_user.url, {
-        method: SummaryApi.logout_user.method,
-        credentials: 'include'
-      });
-      const data = await fetchData.json();
-      if (data.success) {
-        toast.success(data.message);
-        dispatch(setUserDetails(null));
-        localStorage.removeItem('user');
-        setMenuDisplay(false);
-        setLocalUser(null);
-        navigate("/");
-      } else if (data.error) {
-        toast.error(data.message);
-      }
-    } catch (err) {
-      toast.error("Logout failed, please try again.");
+    const fetchData = await fetch(SummaryApi.logout_user.url, {
+      method: SummaryApi.logout_user.method,
+      credentials: 'include'
+    })
+
+    const data = await fetchData.json()
+
+    if (data.success) {
+      toast.success(data.message)
+      dispatch(setUserDetails(null))
+      setMenuDisplay(false)   // ✅ close menu after logout
+      navigate("/")
+    } else if (data.error) {
+      toast.error(data.message)
     }
-  };
+  }
 
   const handleSearch = (value) => {
-    setSearch(value);
+    setSearch(value)
     if (value.trim()) {
-      navigate(`/search?q=${value}`);
+      navigate(`/search?q=${value}`)
     } else {
-      navigate("/search");
+      navigate("/search")
     }
-  };
-
-  const handleProfileClick = () => {
-    if (!localUser?._id) {
-      navigate("/login");
-    } else {
-      setMenuDisplay(prev => !prev);
-    }
-  };
+  }
 
   return (
     <>
-      <header className='h-16 shadow-md bg-white fixed w-full z-50' style={{ paddingLeft: 'env(safe-area-inset-left)', paddingRight: 'env(safe-area-inset-right)' }}>
+      <header className='h-16 shadow-md bg-white fixed w-full   z-50  '>
         <div className='h-full container mx-auto flex items-center px-4 justify-between'>
           <div>
             <Link to={"/"}>
@@ -99,23 +75,29 @@ const Header = () => {
           </div>
 
           <div className='flex items-center gap-7'>
-            {/* Profile Icon - Always visible */}
-            <div className='relative flex justify-center cursor-pointer' onClick={handleProfileClick}>
-              {localUser?.profilePic ? (
-                <img
-                  src={localUser?.profilePic}
-                  className='w-10 h-10 rounded-full'
-                  alt={localUser?.name}
-                />
-              ) : (
-                <FaRegCircleUser className='text-3xl' />
+            {/* Profile / Panel Link */}
+            <div className='relative flex justify-center'>
+              {user?._id && (
+                <div
+                  className='text-3xl cursor-pointer relative flex justify-center'
+                  onClick={() => setMenuDisplay(prev => !prev)}
+                >
+                  {user?.profilePic ? (
+                    <img
+                      src={user?.profilePic}
+                      className='w-10 h-10 rounded-full'
+                      alt={user?.name}
+                    />
+                  ) : (
+                    <FaRegCircleUser />
+                  )}
+                </div>
               )}
 
-              {/* Dropdown only if logged in */}
-              {localUser?._id && menuDisplay && (
-                <div className='absolute bg-white mt-12 right-0 h-fit p-2 shadow-lg rounded z-50' style={{ minWidth: '150px' }}>
+              {user?._id && menuDisplay && (
+                <div className='absolute bg-white bottom-0 top-11 h-fit p-2 shadow-lg rounded z-50'>
                   <nav>
-                    {localUser?.role === ROLE.ADMIN ? (
+                    {user?.role === ROLE.ADMIN ? (
                       <Link
                         to={"/admin-panel/all-products"}
                         className='whitespace-nowrap block hover:bg-slate-100 p-2'
@@ -125,11 +107,11 @@ const Header = () => {
                       </Link>
                     ) : (
                       <Link
-                        to={"/user-panel"}
+                        to={"/user-panel"}  // <-- link for general user
                         className='whitespace-nowrap block hover:bg-slate-100 p-2'
                         onClick={() => setMenuDisplay(false)}
                       >
-                        Account Details
+                        { "Account Details" }
                       </Link>
                     )}
                   </nav>
@@ -137,8 +119,8 @@ const Header = () => {
               )}
             </div>
 
-            {/* Cart - Only if logged in */}
-            {localUser?._id && (
+            {/* Cart */}
+            {user?._id && (
               <Link to={"/cart"} className='text-2xl relative'>
                 <span><FaShoppingCart /></span>
                 <div className='bg-red-600 text-white w-5 h-5 rounded-full p-1 flex items-center justify-center absolute -top-2 -right-3'>
@@ -149,7 +131,7 @@ const Header = () => {
 
             {/* Login / Logout */}
             <div>
-              {localUser?._id ? (
+              {user?._id ? (
                 <button onClick={handleLogout} className='px-3 py-1 rounded-full text-white bg-red-600 hover:bg-red-700'>Logout</button>
               ) : (
                 <Link to={"/login"} className='px-3 py-1 rounded-full text-white bg-red-600 hover:bg-red-700'>Login</Link>
@@ -189,7 +171,7 @@ const Header = () => {
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

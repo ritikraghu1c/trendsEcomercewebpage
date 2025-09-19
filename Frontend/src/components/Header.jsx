@@ -77,7 +77,7 @@ const Header = () => {
           <div className='flex items-center gap-7'>
             {/* Profile / Panel Link */}
             <div className='relative flex justify-center'>
-              {user?._id && (
+              
                 <div
                   className='text-3xl cursor-pointer relative flex justify-center'
                   onClick={() => setMenuDisplay(prev => !prev)}
@@ -92,7 +92,7 @@ const Header = () => {
                     <FaRegCircleUser />
                   )}
                 </div>
-              )}
+              
 
               {user?._id && menuDisplay && (
                 <div className='absolute bg-white bottom-0 top-11 h-fit p-2 shadow-lg rounded z-50'>
